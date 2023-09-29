@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>About</title>
+  <link rel="stylesheet" href="/assets/main.css" />
+  <link rel="stylesheet" href="https://unpkg.com/water.css@2.1.1/out/water.css"
+    integrity="sha384-eHoWBq4xGyEfS3rmZe6gvzlNS/nNJhiPPbKCJN1cQHJukU+q6ji3My2fJGYd1EBo" crossorigin="anonymous" />
+  <script src="https://unpkg.com/htmx.org@1.8.2/dist/htmx.js"
+    integrity="sha384-dUlt2hvoUDyqJ29JH9ln6o/B23lVQiQm8Z0+oEuPBWwKXiyG2MozxxFsCKWM7dLl"
+    crossorigin="anonymous"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js")
+        .then(reg => {
+          reg.addEventListener('statechange', event => {
+            console.log("received `statechange` event", {reg, event})
+          });
+          console.log("service worker registered", reg);
+          reg.active.postMessage({type: 'clientattached'});
+        }).catch(err => {
+          console.error("service worker registration failed", err);
+        });
+      navigator.serviceWorker.addEventListener('controllerchange', event => {
+        console.log("received `controllerchange` event", event);
+      });
+    } else {
+      console.error("serviceWorker is missing from `navigator`. Note service workers must be served over https or on localhost");
+    }
+  </script>
+</head>
+
+<body>
+  <div class="nav-tabs" hx-target="closest body">
+    <a href="" hx-get="./;nav" hx-push-url="" class="selected">About</a>
+    <a href="todos" hx-get="./todos;nav" hx-push-url="todos">Todos</a>
+    <style>
+      .nav-tabs>a {
+        padding: 1em;
+        color: var(--text-bright);
+      }
+
+      .nav-tabs>a:hover {
+        background-color: var(--button-hover) !important;
+      }
+
+      .nav-tabs>a.selected {
+        background-color: var(--button-base);
+      }
+    </style>
+  </div>
+  <h1>HTMX + Service Workers + WebAssembly + Rust</h1>
+  <div>
+    This is a simple proof of concept that shows how you could use
+    <a href="https://htmx.org/">HTMX</a> and Rust for frontend development.
+    The basic idea in HTMX is that a webserver is being called on interactions
+    with DOM elements, and returning back snippets of HTML that will replace
+    certain DOM elements. Instead of going to a real web serviceWorker this
+    project shows how service workers can intercept calls to a server and
+    return back responses driven from WebAssembly instead.
+    <br>
+    Repo: <a href="https://github.com/euforic/wasm-service">https://github.com/euforic/wasm-service</a>
+  </div>
+  <br />
+  <div>
+    <button hx-post="./;clicked" hx-swap="innerHTML" hx-target="#target">Click Me</button>
+    <div id="target"></div>
+  </div>
+</body>
+
+</html>
